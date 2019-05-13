@@ -40,7 +40,7 @@ def main(argv):
     tfrecord_file = flags.tfrecord_path_prefix+".tfrecords"
     with tf.python_io.TFRecordWriter(tfrecord_file) as record_writer:
         for i in range(images_num):
-            image = tf.gfile.FastGFile(image_paths[i], 'rb').read()
+            image = tf.gfile.GFile(image_paths[i], 'rb').read()
             boxes = dataset[image_paths[i]]
             boxes = boxes.tostring()
 

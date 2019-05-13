@@ -18,7 +18,12 @@ XML_PATH = '/media/kent/DISK2/SBRI_Project/dataset_sixray/SIXray-master/ks3util-
 2. Path to class names files
 - NAMES = '/media/kent/DISK2/tensorflow-yolov3/sixray.names'
 3. Output path
-- OUTPUT = 'train.csv'
+- OUTPUT_PATH = '/media/kent/DISK2/tensorflow-yolov3/'
+
+Output:
+Generate two txt files under the path specified by OUTPUT_PATH:
+..output_path/train.txt
+..output_path/test.txt
 
 Output csv format:
 xxx/xxx.jpg 18.19 6.32 424.13 421.83 20 323.86 2.65 640.0 421.94 20
@@ -30,20 +35,25 @@ import glob
 import pandas as pd
 import numpy as np
 import xml.etree.ElementTree as ET
+from sklearn.model_selection import train_test_split
 
 os.chdir('/media/kent/DISK2/SBRI_Project/dataset_sixray/SIXray-master/ks3util-1.1.1-upload/Annotation/')
 XML_PATH = '/media/kent/DISK2/SBRI_Project/dataset_sixray/SIXray-master/ks3util-1.1.1-upload/Annotation/'
+IMG_PATH = '/media/kent/DISK2/SBRI_Project/dataset_sixray/SIXray-master/ks3util-1.1.1-upload/JPEGImage/'
 NAMES = '/media/kent/DISK2/tensorflow-yolov3/sixray.names'
-OUTPUT = 'train.csv'
+OUTPUT_PATH = '/media/kent/DISK2/tensorflow-yolov3/'
 
 def xml_to_csv(path):
     xml_list = []
     for xml_file in glob.glob(path + '/*.xml'):
-        item = []
         tree = ET.parse(xml_file)
         root = tree.getroot()
-        img_path = [str(path + root.find('filename').text)]
-        item += img_path
+        if root.findall('object') == []:
+            print("[Warning] {} contains no <object> section.".format(xml_file))
+            continue
+        line = []
+        img_path = [str(IMG_PATH + root.find('filename').text)]
+        line += img_path
         for member in root.findall('object'):
             if len(member) == 5:
                 value = (
@@ -55,28 +65,63 @@ def xml_to_csv(path):
                     round(float(member[4][3].text)),
                     class_name2index(member[0].text, NAMES),
                 )
-                item += value
+                value = np.array(value, dtype=int).tolist()
+                line += value
             else:
-                print("[Warning] {} contains invalid <object> section.".format(xml_file))
+                print("[Warning] {} contains incomplete <object> section.".format(xml_file))
                 continue
-        xml_list.append(item)
-    xml_df = pd.DataFrame(xml_list)
-    return xml_df
+        xml_list.append(line)
 
+    xml_list = np.array(xml_list)
+    xml_df = pd.DataFrame(xml_list)
+
+    xml = xml_df.values
+    xml_train, xml_test = train_test_split(xml, test_size=0.2)
+
+    xml_train_df = pd.DataFrame(xml_train)
+    xml_test_df = pd.DataFrame(xml_test)
+
+    xml_train_df.to_csv((OUTPUT_PATH + 'sixray_train.txt'), index=False, header=False, sep=' ', )
+    xml_test_df.to_csv((OUTPUT_PATH + 'sixray_test.txt'), index=False, header=False, sep=' ', )
+    
 
 def class_name2index(name, names):
+    """
+    convert class name to corresponding index number.
+    :param name:
+    :param names:
+    :return:
+    """
     name_list = pd.read_csv(names, header=None, index_col=None, dtype='str')
     name_list = name_list.values
     name_list = np.reshape(name_list, [-1])
     index = np.where(name_list == name)
     return index[0][0]
+
+
+def refine_txt(file):
+    """
+    remove the unwanted symbols.
+    :param file:
+    :return:
+    """
+    s = open(file).read()
+    s = s.replace('[', '')
+    s = s.replace("]", '')
+    s = s.replace('"', '')
+    s = s.replace("'", '')
+    s = s.replace(",", '')
     
+    f = open(file, 'w')
+    f.write(s)
+    f.close()
     
 def main():
-    xml_df = xml_to_csv(XML_PATH)
-    xml_df.to_csv(OUTPUT, index=False, header=False, sep=' ',)
+    xml_to_csv(XML_PATH)
     print('Successfully converted xml to csv.')
 
 
 if __name__ == '__main__':
     main()
+    refine_txt((OUTPUT_PATH + 'sixray_train.txt'))
+    refine_txt((OUTPUT_PATH + 'sixray_test.txt'))
