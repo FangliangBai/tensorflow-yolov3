@@ -11,6 +11,7 @@
 #
 #================================================================
 
+import os
 import cv2
 import time
 import numpy as np
@@ -19,6 +20,7 @@ from PIL import Image
 from core import utils
 
 
+os.environ["CUDA_VISIBLE_DEVICES"] = str(1)
 IMAGE_H, IMAGE_W = 416, 416
 video_path = "./data/demo_data/road.mp4"
 video_path = 0 # use camera
