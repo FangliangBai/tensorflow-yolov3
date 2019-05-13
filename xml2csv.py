@@ -12,10 +12,13 @@
 # ================================================================
 """
 Input:
-只需修改三处, 第一第二处改成对应的文件夹目录. 第三处改成对应的文件名, 这里是train.csv
-1. os.chdir('D:\\python3\\models-master\\research\\object_detection\\images\\train')
-2. path = 'D:\\python3\\models-master\\research\\object_detection\\images\\train'
-3. output = 'train.csv'
+1. Path to XML files
+os.chdir('/media/kent/DISK2/SBRI_Project/dataset_sixray/SIXray-master/ks3util-1.1.1-upload/Annotation/')
+XML_PATH = '/media/kent/DISK2/SBRI_Project/dataset_sixray/SIXray-master/ks3util-1.1.1-upload/Annotation/'
+2. Path to class names files
+- NAMES = '/media/kent/DISK2/tensorflow-yolov3/sixray.names'
+3. Output path
+- OUTPUT = 'train.csv'
 
 Output csv format:
 xxx/xxx.jpg 18.19 6.32 424.13 421.83 20 323.86 2.65 640.0 421.94 20
@@ -25,12 +28,13 @@ xxx/xxx.jpg 55.38 132.63 519.84 380.4 16
 import os
 import glob
 import pandas as pd
+import numpy as np
 import xml.etree.ElementTree as ET
 
 os.chdir('/media/kent/DISK2/SBRI_Project/dataset_sixray/SIXray-master/ks3util-1.1.1-upload/Annotation/')
-path = '/media/kent/DISK2/SBRI_Project/dataset_sixray/SIXray-master/ks3util-1.1.1-upload/Annotation/'
-output = 'train.csv'
-
+XML_PATH = '/media/kent/DISK2/SBRI_Project/dataset_sixray/SIXray-master/ks3util-1.1.1-upload/Annotation/'
+NAMES = '/media/kent/DISK2/tensorflow-yolov3/sixray.names'
+OUTPUT = 'train.csv'
 
 def xml_to_csv(path):
     xml_list = []
@@ -40,17 +44,16 @@ def xml_to_csv(path):
         root = tree.getroot()
         img_path = [str(path + root.find('filename').text)]
         item += img_path
-        # print(img_path)
         for member in root.findall('object'):
             if len(member) == 5:
                 value = (
                     # int(root.find('size')[0].text),
                     # int(root.find('size')[1].text),
-                    member[4][0].text,
-                    member[4][1].text,
-                    member[4][2].text,
-                    member[4][3].text,
-                    member[0].text,
+                    round(float(member[4][0].text)),
+                    round(float(member[4][1].text)),
+                    round(float(member[4][2].text)),
+                    round(float(member[4][3].text)),
+                    class_name2index(member[0].text, NAMES),
                 )
                 item += value
             else:
@@ -61,9 +64,17 @@ def xml_to_csv(path):
     return xml_df
 
 
+def class_name2index(name, names):
+    name_list = pd.read_csv(names, header=None, index_col=None, dtype='str')
+    name_list = name_list.values
+    name_list = np.reshape(name_list, [-1])
+    index = np.where(name_list == name)
+    return index[0][0]
+    
+    
 def main():
-    xml_df = xml_to_csv(path)
-    xml_df.to_csv(output, index=None)
+    xml_df = xml_to_csv(XML_PATH)
+    xml_df.to_csv(OUTPUT, index=False, header=False, sep=' ',)
     print('Successfully converted xml to csv.')
 
 

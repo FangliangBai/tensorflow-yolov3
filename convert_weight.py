@@ -39,7 +39,7 @@ class parser(argparse.ArgumentParser):
 
         self.add_argument(
             "--anchors_path", "-ap", default="./data/coco_anchors.txt", type=str,
-            help="[default: %(default)s] The path of anchors ...",
+            help="[default: %(default)s] The XML_PATH of anchors ...",
             metavar="<AP>",
         )
 
@@ -124,7 +124,7 @@ def main(argv):
             load_ops = utils.load_weights(tf.global_variables(scope='yolov3'), flags.weights_path)
             sess.run(load_ops)
             save_path = saver.save(sess, save_path=flags.ckpt_file)
-            print('=> model saved in path: {}'.format(save_path))
+            print('=> model saved in XML_PATH: {}'.format(save_path))
 
         if flags.freeze:
             saver.restore(sess, flags.ckpt_file)
