@@ -23,14 +23,14 @@ LR               = 0.001 # if Nan, set 0.0005, 0.0001
 DECAY_STEPS      = 100
 DECAY_RATE       = 0.9
 SHUFFLE_SIZE     = 200
-CLASSES          = utils.read_coco_names('./data/raccoon.names')
-ANCHORS          = utils.get_anchors('./data/raccoon_anchors.txt', IMAGE_H, IMAGE_W)
+CLASSES          = utils.read_coco_names('./sixray.names')  # todo
+ANCHORS          = utils.get_anchors('./sixray_anchors.txt', IMAGE_H, IMAGE_W)  # todo
 NUM_CLASSES      = len(CLASSES)
 EVAL_INTERNAL    = 100
 SAVE_INTERNAL    = 500
 
-train_tfrecord   = "./raccoon_dataset/raccoon_train.tfrecords"
-test_tfrecord    = "./raccoon_dataset/raccoon_test.tfrecords"
+train_tfrecord   = "./sixray_train.tfrecords"   # todo
+test_tfrecord    = "./sixray_test.tfrecords"    # todo
 
 parser   = Parser(IMAGE_H, IMAGE_W, ANCHORS, NUM_CLASSES)
 trainset = dataset(parser, train_tfrecord, BATCH_SIZE, shuffle=SHUFFLE_SIZE)
@@ -82,7 +82,7 @@ for step in range(STEPS):
 
     writer_train.add_summary(run_items[1], global_step=step)
     writer_train.flush() # Flushes the event file to disk
-    if (step+1) % SAVE_INTERNAL == 0: saver.save(sess, save_path="./checkpoint/yolov3.ckpt", global_step=step+1)
+    if (step+1) % SAVE_INTERNAL == 0: saver.save(sess, save_path="./checkpoint/yolov3_sixray.ckpt", global_step=step+1) # todo
 
     print("=> STEP %10d [TRAIN]:\tloss_xy:%7.4f \tloss_wh:%7.4f \tloss_conf:%7.4f \tloss_class:%7.4f"
         %(step+1, run_items[5], run_items[6], run_items[7], run_items[8]))

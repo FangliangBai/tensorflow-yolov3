@@ -22,9 +22,9 @@ sess = tf.Session()
 
 
 IMAGE_H, IMAGE_W = 416, 416
-CLASSES          = utils.read_coco_names('./data/raccoon.names')
+CLASSES          = utils.read_coco_names('./sixray.names')    # todo
 NUM_CLASSES      = len(CLASSES)
-ANCHORS          = utils.get_anchors('./data/raccoon_anchors.txt', IMAGE_H, IMAGE_W)
+ANCHORS          = utils.get_anchors('./sixray_anchors.txt', IMAGE_H, IMAGE_W)
 CKPT_FILE        = "./checkpoint/yolov3.ckpt-2500"
 IOU_THRESH       = 0.5
 SCORE_THRESH     = 0.3

@@ -11,14 +11,14 @@
 #
 # ================================================================
 """
-Input:
+Parameters:
 1. Path to XML files
-os.chdir('/media/kent/DISK2/SBRI_Project/dataset_sixray/SIXray-master/ks3util-1.1.1-upload/Annotation/')
-XML_PATH = '/media/kent/DISK2/SBRI_Project/dataset_sixray/SIXray-master/ks3util-1.1.1-upload/Annotation/'
-2. Path to class names files
-- NAMES = '/media/kent/DISK2/tensorflow-yolov3/sixray.names'
+XML_PATH = '.../Annotation/'
+IMG_PATH = '.../JPEGImage/'
+2. Path to class class.names files
+NAMES = '.../sixray.names'
 3. Output path
-- OUTPUT_PATH = '/media/kent/DISK2/tensorflow-yolov3/'
+OUTPUT_PATH = '.../tensorflow-yolov3/'
 
 Output:
 Generate two txt files under the path specified by OUTPUT_PATH:
@@ -37,7 +37,6 @@ import numpy as np
 import xml.etree.ElementTree as ET
 from sklearn.model_selection import train_test_split
 
-os.chdir('/media/kent/DISK2/SBRI_Project/dataset_sixray/SIXray-master/ks3util-1.1.1-upload/Annotation/')
 XML_PATH = '/media/kent/DISK2/SBRI_Project/dataset_sixray/SIXray-master/ks3util-1.1.1-upload/Annotation/'
 IMG_PATH = '/media/kent/DISK2/SBRI_Project/dataset_sixray/SIXray-master/ks3util-1.1.1-upload/JPEGImage/'
 NAMES = '/media/kent/DISK2/tensorflow-yolov3/sixray.names'

@@ -15,12 +15,14 @@ import numpy as np
 import tensorflow as tf
 from PIL import Image
 from core import utils
+import os
 
 
+os.environ["CUDA_VISIBLE_DEVICES"] = str(0)
 IMAGE_H, IMAGE_W = 416, 416
-classes = utils.read_coco_names('./data/raccoon.names')
+classes = utils.read_coco_names('./sixray.names')     # todo
 num_classes = len(classes)
-image_path = "./raccoon_dataset/images/raccoon-182.jpg"  # 181,
+image_path = "/media/kent/DISK2/SBRI_Project/dataset_sixray/SIXray-master/ks3util-1.1.1-upload/JPEGImage/P03016.jpg"  # 181,
 img = Image.open(image_path)
 img_resized = np.array(img.resize(size=(IMAGE_W, IMAGE_H)), dtype=np.float32)
 img_resized = img_resized / 255.
