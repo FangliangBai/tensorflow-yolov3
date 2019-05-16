@@ -17,6 +17,11 @@ import tensorflow as tf
 from core import utils
 from PIL import Image
 from core.dataset import Parser, dataset
+import os
+os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"] = str(1)
+
+
 sess = tf.Session()
 
 IMAGE_H, IMAGE_W = 416, 416
