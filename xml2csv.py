@@ -21,7 +21,7 @@ NAMES = '.../sixray.names'
 OUTPUT_PATH = '.../tensorflow-yolov3/'
 
 Output:
-Generate two txt files under the path specified by OUTPUT_PATH:
+Generate train and test tables under the path specified by OUTPUT_PATH:
 ..output_path/train.txt
 ..output_path/test.txt
 
@@ -37,10 +37,13 @@ import numpy as np
 import xml.etree.ElementTree as ET
 from sklearn.model_selection import train_test_split
 
-XML_PATH = '/media/kent/DISK2/SBRI_Project/dataset_sixray/SIXray-master/ks3util-1.1.1-upload/Annotation/'
-IMG_PATH = '/media/kent/DISK2/SBRI_Project/dataset_sixray/SIXray-master/ks3util-1.1.1-upload/JPEGImage/'
-NAMES = '/media/kent/DISK2/tensorflow-yolov3/sixray.names'
-OUTPUT_PATH = '/media/kent/DISK2/tensorflow-yolov3/'
+XML_PATH = '/home/kent/MATLAB_workspace/XML/'
+IMG_PATH = '/home/kent/Pictures/'
+NAMES = '/home/kent/MATLAB_workspace/class.names'
+OUTPUT_PATH = '/home/kent/MATLAB_workspace/'
+OUTPUT_TRAIN_TBLNAME = 'sixray_train.txt'
+OUTPUT_TEST_TBLNAME = 'sixray_test.txt'
+
 
 def xml_to_csv(path):
     xml_list = []
@@ -80,8 +83,8 @@ def xml_to_csv(path):
     xml_train_df = pd.DataFrame(xml_train)
     xml_test_df = pd.DataFrame(xml_test)
 
-    xml_train_df.to_csv((OUTPUT_PATH + 'sixray_train.txt'), index=False, header=False, sep=' ', )
-    xml_test_df.to_csv((OUTPUT_PATH + 'sixray_test.txt'), index=False, header=False, sep=' ', )
+    xml_train_df.to_csv((OUTPUT_PATH + OUTPUT_TRAIN_TBLNAME), index=False, header=False, sep=' ', )
+    xml_test_df.to_csv((OUTPUT_PATH + OUTPUT_TEST_TBLNAME), index=False, header=False, sep=' ', )
     
 
 def class_name2index(name, names):
@@ -114,7 +117,8 @@ def refine_txt(file):
     f = open(file, 'w')
     f.write(s)
     f.close()
-    
+
+
 def main():
     xml_to_csv(XML_PATH)
     print('Successfully converted xml to csv.')
@@ -122,5 +126,5 @@ def main():
 
 if __name__ == '__main__':
     main()
-    refine_txt((OUTPUT_PATH + 'sixray_train.txt'))
-    refine_txt((OUTPUT_PATH + 'sixray_test.txt'))
+    refine_txt((OUTPUT_PATH + OUTPUT_TRAIN_TBLNAME))
+    refine_txt((OUTPUT_PATH + OUTPUT_TEST_TBLNAME))

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # ================ Train ================
+
 # Gene class.names file manually.
 
 # Generate train.txt, test.txt.
@@ -24,6 +25,12 @@ python quick_train.py
 tensorboard --logdir ./data
 
 # ================ Evaluate ================
+
+# Finalize the weights
 python convert_weight.py -cf ./checkpoint/yolov3_sixray.ckpt-2500 --num_classes 6 -ap ./sixray_anchors.txt --freeze
+
+# Quick test on a single image
 python quick_test.py
+
+# Test on all images
 python evaluate.py

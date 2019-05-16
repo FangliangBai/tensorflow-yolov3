@@ -18,14 +18,19 @@ from tqdm import tqdm
 from PIL import Image
 from core import utils, yolov3
 from core.dataset import dataset, Parser
+import os
+os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"] = str(1)
+
+
 sess = tf.Session()
 
 
 IMAGE_H, IMAGE_W = 416, 416
 CLASSES          = utils.read_coco_names('./sixray.names')    # todo
 NUM_CLASSES      = len(CLASSES)
-ANCHORS          = utils.get_anchors('./sixray_anchors.txt', IMAGE_H, IMAGE_W)
-CKPT_FILE        = "./checkpoint/yolov3.ckpt-2500"
+ANCHORS          = utils.get_anchors('./sixray_anchors.txt', IMAGE_H, IMAGE_W)  # todo
+CKPT_FILE        = "./checkpoint/yolov3_sixray.ckpt-2500" # todo
 IOU_THRESH       = 0.5
 SCORE_THRESH     = 0.3
 
@@ -33,7 +38,7 @@ all_detections   = []
 all_annotations  = []
 all_aver_precs   = {CLASSES[i]:0. for i in range(NUM_CLASSES)}
 
-test_tfrecord    = "./raccoon_dataset/raccoon_*.tfrecords"
+test_tfrecord    = "./sixray_*.tfrecords"
 parser           = Parser(IMAGE_H, IMAGE_W, ANCHORS, NUM_CLASSES)
 testset          = dataset(parser, test_tfrecord , batch_size=1, shuffle=None, repeat=False)
 
