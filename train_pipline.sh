@@ -2,7 +2,7 @@
 
 # ================ Train ================
 
-# Gene class.names file manually.
+# Create class.names file (contains the class names) manually, e.g. /media/kent/DISK2/tensorflow-yolov3/sixray.names.
 
 # Generate train.txt, test.txt.
 # preset the parameters

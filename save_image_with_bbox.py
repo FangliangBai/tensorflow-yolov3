@@ -25,9 +25,9 @@ import cv2 as cv
 """
 Parameters
 """
-ImgPath = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/15.5.2019/'    # image folder
-AnnoPath = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/mylabel/'    # xml folder
-save_path = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/annotated_imgs/'     # annotated image folder
+ImgPath = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/29.05.2019_2finish/Image/'    # image folder
+AnnoPath = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/29.05.2019_2finish/Annotation/'    # xml folder
+save_path = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/29.05.2019_2finish/Annotated_image/'     # annotated image folder
 
 
 def draw_anchor(ImgPath, AnnoPath, save_path):

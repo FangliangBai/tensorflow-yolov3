@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 # coding=utf-8
+
 # ================================================================
 #   Copyright (C) 2019 * Ltd. All rights reserved.
 #
@@ -10,13 +11,14 @@
 #   Link        : https://blog.csdn.net/as472780551/article/details/80645861
 #
 # ================================================================
+
 """
 Parameters:
 1. Path to XML files
-XML_PATH = '.../Annotation/'
-IMG_PATH = '.../JPEGImage/'
+XML_PATH = '.../Annotation/', which contains the XML files.
+IMG_PATH = '.../JPEGImage/', which contains the images.
 2. Path to class class.names files
-NAMES = '.../sixray.names'
+NAMES = '.../sixray.names', which contains the class name.
 3. Output path
 OUTPUT_PATH = '.../tensorflow-yolov3/'
 
@@ -26,9 +28,9 @@ Generate train and test tables under the path specified by OUTPUT_PATH:
 ..output_path/test.txt
 
 Output csv format:
-xxx/xxx.jpg 18.19 6.32 424.13 421.83 20 323.86 2.65 640.0 421.94 20
-xxx/xxx.jpg 55.38 132.63 519.84 380.4 16
-# image_path x_min y_min x_max y_max class_id x_min y_min ... class_id
+xxx/xxx.jpg 18.19,6.32,424.13,421.83,20 323.86,2.65,640.0,421.94,20
+xxx/xxx.jpg 48,240,195,371,11 8,12,352,498,14
+# image_path x_min, y_min, x_max, y_max, class_id  x_min, y_min ,..., class_id
 """
 import os
 import glob
@@ -37,16 +39,17 @@ import numpy as np
 import xml.etree.ElementTree as ET
 from sklearn.model_selection import train_test_split
 
-XML_PATH = '/home/kent/MATLAB_workspace/XML/'
-IMG_PATH = '/home/kent/Pictures/'
-NAMES = '/home/kent/MATLAB_workspace/class.names'
-OUTPUT_PATH = '/home/kent/MATLAB_workspace/'
-OUTPUT_TRAIN_TBLNAME = 'sixray_train.txt'
-OUTPUT_TEST_TBLNAME = 'sixray_test.txt'
+XML_PATH = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/OneDrive_shared/processed/Annotation/'
+IMG_PATH = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/OneDrive_shared/processed/Image/'
+NAMES = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/file_to_train_yolo/mm-wave.names'
+OUTPUT_PATH = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/file_to_train_yolo/'
+OUTPUT_TRAIN_TBLNAME = 'mm-wave_train.txt'
+OUTPUT_TEST_TBLNAME = 'mm-wave_test.txt'
 
 
 def xml_to_csv(path):
     xml_list = []
+    cont = 1
     for xml_file in glob.glob(path + '/*.xml'):
         tree = ET.parse(xml_file)
         root = tree.getroot()
@@ -68,12 +71,14 @@ def xml_to_csv(path):
                     class_name2index(member[0].text, NAMES),
                 )
                 value = np.array(value, dtype=int).tolist()
-                line += value
+                line += [value, '_']
             else:
                 print("[Warning] {} contains incomplete <object> section.".format(xml_file))
                 continue
         xml_list.append(line)
-
+        print(cont)
+        cont += 1
+        
     xml_list = np.array(xml_list)
     xml_df = pd.DataFrame(xml_list)
 
@@ -112,7 +117,10 @@ def refine_txt(file):
     s = s.replace("]", '')
     s = s.replace('"', '')
     s = s.replace("'", '')
-    s = s.replace(",", '')
+    s = s.replace('jpg,', 'jpg')
+    s = s.replace(', ', ',')
+    s = s.replace(',_,', ' ')
+    s = s.replace(',_', '')
     
     f = open(file, 'w')
     f.write(s)
