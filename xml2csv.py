@@ -39,10 +39,10 @@ import numpy as np
 import xml.etree.ElementTree as ET
 from sklearn.model_selection import train_test_split
 
-XML_PATH = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/OneDrive_shared/processed/Annotation/'
-IMG_PATH = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/OneDrive_shared/processed/Image/'
-NAMES = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/file_to_train_yolo/mm-wave.names'
-OUTPUT_PATH = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/file_to_train_yolo/'
+XML_PATH = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/file to train_yolo/Annotation/'
+IMG_PATH = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/file to train_yolo/Image/'
+NAMES = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/file to train_yolo/mm-wave.names'
+OUTPUT_PATH = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/file to train_yolo/'
 OUTPUT_TRAIN_TBLNAME = 'mm-wave_train.txt'
 OUTPUT_TEST_TBLNAME = 'mm-wave_test.txt'
 
@@ -70,13 +70,18 @@ def xml_to_csv(path):
                     round(float(member[4][3].text)),
                     class_name2index(member[0].text, NAMES),
                 )
+                # The classes for mm-wave dataset is
+                # 0 scissors, 1 knife, 2 water, 3 oil, 4 cardboard.
+                # However, cardboard is not considered, so we skip it in the following if block.
+                if value[-1] == 4:
+                    continue
                 value = np.array(value, dtype=int).tolist()
                 line += [value, '_']
             else:
                 print("[Warning] {} contains incomplete <object> section.".format(xml_file))
                 continue
         xml_list.append(line)
-        print(cont)
+        # print(cont)
         cont += 1
         
     xml_list = np.array(xml_list)
@@ -102,6 +107,7 @@ def class_name2index(name, names):
     name_list = pd.read_csv(names, header=None, index_col=None, dtype='str')
     name_list = name_list.values
     name_list = np.reshape(name_list, [-1])
+    print('[Error] The xml class name', name, 'can not match the pre-defined names.')
     index = np.where(name_list == name)
     return index[0][0]
 
