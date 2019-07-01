@@ -63,8 +63,8 @@ def xml_to_csv(path):
             logger.warning('{} contains no <object> section.'.format(xml_file))
             continue
         line = []
-        # img_path = [str(IMG_PATH + root.find('filename').text)]         # Opt. 1: find image file name inside xml file
-        img_path = [str(IMG_PATH + os.path.splitext(xml_file)[0])]      # Opt. 2: treat xml file name as image file name.
+        # img_path = [str(IMG_PATH + root.find('filename').text)]                       # Opt. 1: find image file name inside xml file
+        img_path = [str(IMG_PATH + os.path.splitext(os.path.basename(xml_file))[0])]    # Opt. 2: treat xml file name as image file name.
         line += img_path
         for member in root.findall('object'):
             if len(member) == 5:
