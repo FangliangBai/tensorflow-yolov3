@@ -35,16 +35,17 @@ xxx/xxx.jpg 48,240,195,371,11 8,12,352,498,14
 import glob
 import xml.etree.ElementTree as ET
 import logging
+import os
 
 from tqdm import tqdm
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-XML_PATH = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/file to train_yolo/Annotation/'
-IMG_PATH = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/file to train_yolo/Image/'
-NAMES = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/file to train_yolo/mm-wave.names'
-OUTPUT_PATH = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/file to train_yolo/'
+XML_PATH = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/file_to_train_yolo/Annotation/'
+IMG_PATH = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/file_to_train_yolo/Image/'
+NAMES = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/file_to_train_yolo/mm-wave.names'
+OUTPUT_PATH = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/file_to_train_yolo/'
 OUTPUT_TRAIN_TBLNAME = 'mm-wave_train.txt'
 OUTPUT_TEST_TBLNAME = 'mm-wave_test.txt'
 
@@ -55,15 +56,16 @@ logger = logging.getLogger()
 
 def xml_to_csv(path):
     xml_list = []
-    cont = 1
     for xml_file in tqdm(glob.glob(path + '/*.xml')):
+        logger.info('xml_file: {}'.format(os.path.basename(xml_file)))
         tree = ET.parse(xml_file)
         root = tree.getroot()
         if root.findall('object') == []:
             logger.warning('{} contains no <object> section.'.format(xml_file))
             continue
         line = []
-        img_path = [str(IMG_PATH + root.find('filename').text)]
+        img_path = [str(IMG_PATH + root.find('filename').text)]         # Opt. 1: find image file name inside xml file
+        img_path = [str(IMG_PATH + os.path.splitext(xml_file)[0])]      # Opt. 2: treat xml file name as image file name.
         line += img_path
         for member in root.findall('object'):
             if len(member) == 5:
@@ -84,8 +86,6 @@ def xml_to_csv(path):
                 logger.warning('{} contains incomplete <object> section.'.format(xml_file))
                 continue
         xml_list.append(line)
-        # print(cont)
-        cont += 1
 
     logger.info('List generation complete')
 
