@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 # coding=utf-8
-#================================================================
+# ================================================================
 #   Copyright (C) 2019 * Ltd. All rights reserved.
 #
 #   Editor      : VIM
@@ -8,55 +8,59 @@
 #   Author      : Fangliang
 #   Created date: 2019/05/20 - 12:40
 #   Description : Read bounding boxes information from xml, show them on images, save images in a folder.
-#================================================================
+# ================================================================
 """
 Note:
     Image files and corresponding xml file should have the SAME NAME.
 
 Use:
     1. change the parameter in the Parameters section.
+    2. $ python ./save_image_with_bbox.py
 """
-
 
 import os
 import xml.dom.minidom
+
 import cv2 as cv
+from tqdm import tqdm
 
 """
 Parameters
 """
-ImgPath = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/file to train_yolo/Image/'    # image folder
-AnnoPath = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/file to train_yolo/Annotation/'    # xml folder
-save_path = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/file to train_yolo/Annotated_image/'     # annotated image folder
+ImgPath = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/file to train_yolo/Image/'  # image folder
+AnnoPath = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/file to train_yolo/Annotation/'  # xml folder
+save_path = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/file to train_yolo/Annotated_image/'  # annotated image
+# folder
 
 
 def draw_anchor(ImgPath, AnnoPath, save_path):
     imagelist = os.listdir(ImgPath)
-    for image in imagelist:
-        
-        image_pre, ext = os.path.splitext(image)
-        imgfile = ImgPath + image
+    for imageName in tqdm(imagelist):
+
+        image_pre, ext = os.path.splitext(imageName)
+        imgfile = ImgPath + imageName
         xmlfile = AnnoPath + image_pre + '.xml'
-        # print(image)
+        # print(imageName)
         # 打开xml文档
         DOMTree = xml.dom.minidom.parse(xmlfile)
         # 得到文档元素对象
         collection = DOMTree.documentElement
         # 读取图片
         img = cv.imread(imgfile)
-        
+
         filenamelist = collection.getElementsByTagName("filename")
         filename = filenamelist[0].childNodes[0].data
-        print(filename)
+        # print(filename)
+
         # 得到标签名为object的信息
         objectlist = collection.getElementsByTagName("object")
-        
+
         for objects in objectlist:
             # 每个object中得到子标签名为name的信息
             namelist = objects.getElementsByTagName('name')
             # 通过此语句得到具体的某个name的值
             objectname = namelist[0].childNodes[0].data
-            
+
             bndbox = objects.getElementsByTagName('bndbox')
             # print(bndbox)
             for box in bndbox:
@@ -72,7 +76,7 @@ def draw_anchor(ImgPath, AnnoPath, save_path):
                 cv.putText(img, objectname, (x1, y1), cv.FONT_HERSHEY_SIMPLEX, fontScale=0.7,
                            color=(255, 128, 255), thickness=2)
                 # cv.imshow('head', img)
-                cv.imwrite(save_path + filename, img)  # save picture
+                cv.imwrite(save_path + imageName, img)  # save picture
 
 
 if __name__ == "__main__":
