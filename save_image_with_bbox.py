@@ -13,7 +13,7 @@
 Note:
     Image files and corresponding xml file should have the SAME NAME.
 
-Example:
+Use:
     1. change the parameter in the Parameters section.
 """
 
@@ -25,9 +25,9 @@ import cv2 as cv
 """
 Parameters
 """
-ImgPath = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/29.05.2019_2finish/Image/'    # image folder
-AnnoPath = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/29.05.2019_2finish/Annotation/'    # xml folder
-save_path = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/29.05.2019_2finish/Annotated_image/'     # annotated image folder
+ImgPath = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/file to train_yolo/Image/'    # image folder
+AnnoPath = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/file to train_yolo/Annotation/'    # xml folder
+save_path = '/media/kent/DISK2/SBRI_Project/dataset_mmwave/file to train_yolo/Annotated_image/'     # annotated image folder
 
 
 def draw_anchor(ImgPath, AnnoPath, save_path):
